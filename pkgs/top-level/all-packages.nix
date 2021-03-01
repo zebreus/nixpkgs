@@ -8663,6 +8663,8 @@ in
 
   up = callPackage ../tools/misc/up { };
 
+  upload = callPackage ../tools/misc/upload { };
+
   upterm = callPackage ../tools/misc/upterm { };
 
   upx = callPackage ../tools/compression/upx { };

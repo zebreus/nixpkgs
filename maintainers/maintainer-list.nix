@@ -10458,6 +10458,12 @@
     email = "zef@zef.me";
     name = "Zef Hemel";
   };
+  zebreus = {
+    email = "lennart@madmanfred.com";
+    github = "Zebreus";
+    githubId = 1557253;
+    name = "Lennart Eichhorn";
+  };
   zeratax = {
     email = "mail@zera.tax";
     github = "ZerataX";

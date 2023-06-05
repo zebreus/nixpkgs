@@ -1,0 +1,376 @@
+= Asciidoctor JS
+
+This document contains samples for all the asciidoctor js extensions.
+
+Run with all extensions enabled: `nix run --sandbox .#asciidoctor-web-pdf -- -r asciidoctor-kroki -r @deepsymmetry/asciidoctor-bytefield -r asciidoctor-chart -r asciidoctor-color -r asciidoctor-emoji -r asciidoctor-extension-interactive-runner -r @djencks/asciidoctor-mathjax -r @djencks/asciidoctor-template -r @djencks/asciidoctor-openblock -r asciidoctor-shiki -r asciidoctor-liquibase -r @djencks/asciidoctor-glossary -r asciidoctor-interdoc-reftext -r @djencks/asciidoctor-highlight.js-build-time -r @mvik/asciidoctor-hill-chart -r asciidoctor-highlight.js -r @springio/asciidoctor-extensions -r asciidoctor-katex -r asciidoctor-jira -r asciidoctor-prism-extension -r asciidoctor-external-callout -r @asciidoctor/tabs -r asciidoctor-caniuse -r asciidoctor-tweet test.adoc`
+
+
+
+== Testing asciidoctor-kroki
+
+Asciidoctor kroki supports many diagrams
+
+.The toolchain
+[pikchr]
+....
+   arrow right 150% "Rust" "function"
+   box rad 10px "Rust Compiler" fit
+   arrow right 190% "LLVM IR" "function"
+   box rad 10px "PandA Bambu" fit
+   arrow right 130% "Verilog" "RTL"
+....
+
+== Testing @deepsymmetry/asciidoctor-bytefield
+
+Supports bytefield diagrams.
+
+Replaced by kroki
+
+.A byte field
+[bytefield]
+----
+(draw-column-headers)
+(draw-box 42)
+(draw-gap "Whee!")
+(draw-bottom)
+----
+
+== asciidoctor-chart
+
+Simple charts.
+
+Not sure if this works.
+
+[chart,line]
+....
+January,February,March
+28,48,40
+65,59,80
+....
+
+== asciidoctor-color
+
+Render color chips.
+
+color preview swatch
+
+Something color:#FF5733[]
+
+What do you think about `hsla(36, 100%, 50%, 75%)` in our design?
+
+== asciidoctor-emoji
+
+https://www.npmjs.com/package/asciidoctor-emoji
+
+Renders emojis.
+
+Not sure why this exists, unicode emojis should work just fine.
+
+Will turn emoji:heart[] into ❤️ !
+
+== asciidoctor-extension-interactive-runner
+
+https://www.npmjs.com/package/asciidoctor-extension-interactive-runner
+
+Interactive javascript code samples
+
+Notebooks for asciidoc
+
+[source%interactive,javascript]
+----
+const thing = "world"
+
+console.log(`hello ${thing}`);  // <1>
+----
+<1> Now you can see the output of this line in the browser.
+
+== @djencks/asciidoctor-mathjax
+
+https://www.npmjs.com/package/@djencks/asciidoctor-mathjax
+
+Serverside mathjax rendering using mathjax 3
+
+When $a \ne 0$, there are two solutions to \(ax^2 + bx + c = 0\) and they are
+$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
+
+[asciimath]
+++++
+[[a,b],[c,d]]((n),(k))
+sqrt(4) = 2
+sqrt(9) = 3
+++++
+
+== @djencks/asciidoctor-template 
+
+Accidentally deleted documentation
+
+== @djencks/asciidoctor-jsonpath
+
+Accidentally deleted documentation
+
+Seems broken.
+
+Not included.
+
+== @djencks/asciidoctor-openblock
+
+Accidentally deleted documentation
+
+== asciidoctor-shiki
+
+Accidentally deleted documentation
+
+== asciidoctor-liquibase
+
+Accidentally deleted documentation
+
+== @djencks/asciidoctor-glossary
+
+Accidentally deleted documentation
+
+This is a sentence all tied up in glossterm:tatting[the process of making lace by hand].
+
+This is a sentence all tied up in glossterm:blarghh[blarghhhh!!!].
+
+[glossary]
+=== Glossary
+
+glossary::[]
+
+== asciidoctor-interdoc-reftext
+
+Accidentally deleted documentation
+
+== asciidoctor-mathjax3
+
+Accidentally deleted documentation
+
+Seems broken.
+
+Not included.
+
+== @djencks/asciidoctor-xpath
+
+Accidentally deleted documentation
+
+Seems broken.
+
+Not included.
+
+== @djencks/asciidoctor-highlight.js-build-time
+
+Highlightjs at build time
+
+[source,ruby]
+----
+puts "Hello, World!"
+----
+
+== @mvik/asciidoctor-hill-chart
+
+https://www.npmjs.com/package/@mvik/asciidoctor-hill-chart
+
+Hill charts?
+
+Probably replaced by something in asciidoctor-kroki
+
+Broken/unfinished.
+
+[hill-chart,width=500px]
+.Tasks
+--
+Getting started;0.1
+Almost there;0.64;red
+Soon done;0.9;steelblue;5
+--
+
+== asciidoctor-highlight.js
+
+https://www.npmjs.com/package/asciidoctor-highlight.js
+
+Serverside syntax highlighting using highlight js
+
+Setting `:source-highlighter: highlightjs-ext` should activate it.
+
+[source,ruby]
+----
+puts "Hello, World!"
+----
+
+== @springio/asciidoctor-extensions
+
+https://www.npmjs.com/package/@springio/asciidoctor-extensions
+
+Various features for java code listings.
+
+includeCode macro for faster code listings
+
+Can lint for sectionids that are not kebab case
+
+Replace text from code listings (only Java, Kotlin, or Groovy)
+
+[source,java]
+----
+public class Example {
+    private final Something something;
+
+    private final Other other;
+
+    public Example() {
+        this.something = /**/ new MockSomething();
+        this.other = /* @chomp:line your thing... */ new MyThing();
+    }
+}
+----
+
+Java code folding
+
+[source,java]
+----
+public class Example {
+    // @fold:on
+    private final String first;
+
+    private final String second;
+    // @fold:off
+
+    public Example(String first, String second) {
+        this.first = first;
+        this.second = second;
+    }
+}
+----
+
+Somethings configprops
+
+[configprops,yaml]
+----
+spring:
+  mail:
+    properties:
+      "[mail.smtp.connectiontimeout]": 5000
+      "[mail.smtp.timeout]": 3000
+      "[mail.smtp.writetimeout]": 5000
+  ldap:
+    embedded:
+      base-dn:
+      - dc=spring,dc=io
+      - dc=pivotal,dc=io
+  mvc:
+    contentnegotiation:
+      media-types:
+        markdown: text/markdown
+----
+
+== asciidoctor-katex
+
+https://www.npmjs.com/package/asciidoctor-katex
+
+Buildtime latexmath rendering using katex
+
+== asciidoctor.js-pug
+
+Seems unmaintened and outdated
+
+Not included.
+
+== asciidoctor-jira
+
+https://www.npmjs.com/package/asciidoctor-jira
+
+Macros for accessing jira from asciidoc.
+
+Not tested as I dont use jira, but code and docs seem ok
+
+== asciidoctor-prism-extension
+
+https://www.npmjs.com/package/asciidoctor-prism-extension
+
+Use prism as a syntaxhighlighter for asciidoc
+
+[source,adoc]
+----
+:source-highlighter: prism
+:prism-languages: bash,docker,jsx
+----
+
+== asciidoctor-external-callout
+
+https://www.npmjs.com/package/asciidoctor-external-callout
+
+Add callouts outside of the listing
+
+Callouts by lines:
+
+[source,ruby]
+----
+require 'sinatra'
+
+get '/hi' do
+  "Hello World!"
+end
+----
+. Library import @3
+. URL mapping @5
+. Response block @5
+. Other thing @/get/
+
+== @asciidoctor/tabs
+
+https://www.npmjs.com/package/@asciidoctor/tabs
+
+Adds a tabbed block to asciidoc
+
+[tabs]
+====
+Tab A:: Contents of Tab A.
+
+Tab B::
++
+Contents of Tab B.
+
+Tab C::
++
+--
+Contents of Tab C.
+
+Contains more than one block.
+--
+====
+
+[tabs]
+======
+Tab A::
++
+Selecting Tab A reveals a tabset with Tab Y and Tab Z.
++
+[tabs]
+====
+Tab Y:: Contents of Tab Y, nested inside Tab A.
+Tab Z:: Contents of Tab Z, nested inside Tab A.
+====
+
+Tab B:: Just text.
+======
+
+== asciidoctor-caniuse
+
+https://www.npmjs.com/package/asciidoctor-caniuse
+
+Shows which browsers support certain features
+
+.battery status
+caniuse:battery-status[]
+
+== asciidoctor-tweet
+
+https://www.npmjs.com/package/asciidoctor-tweet
+
+Render tweets in your asciidoc
+
+The plugin has a macro for automatically retrieving tweets, but it is broken.
+
+[tweet,Greta Thunberg,@GretaThunberg,16 sept. 2018,avatar-url=https://placehold.co/400,retweet-count=11 k,favorite-count=30 k]
+____
+Fridays for future. The school strike continues! #climatestrike #klimatstrejk #FridaysForFuture
+____

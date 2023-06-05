@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+  <row name="foo">
+    <description>fooish</description>
+    <uniqueish>1</uniqueish>
+  </row>
+  <row name="bar">
+    <description>barish</description>
+    <uniqueish>2</uniqueish>
+  </row>
+  ],
+  <objects>
+    <object id="field1" p1="a" p2="b" uniqueish="1"/>
+    <object id="field2" p1="c" p2="d" uniqueish="1"/>
+    <object id="field3" p1="e" p2="f" uniqueish="2"/>
+  </objects>
+</data>

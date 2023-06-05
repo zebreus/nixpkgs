@@ -1,0 +1,10 @@
+= If you see this referencing across docs works
+
+[id=coollist]
+== Cool list
+
+
+* First
+* second
+[id=third]
+* Third item is cool

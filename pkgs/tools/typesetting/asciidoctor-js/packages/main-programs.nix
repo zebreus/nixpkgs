@@ -2,4 +2,5 @@
 # executable that matches that packages name, so that they'll work with `nix run`.
 {
   asciidoctor-pdf = "asciidoctor-web-pdf";
+  "@asciidoctor/reveal.js" = "asciidoctor-revealjs";
 }

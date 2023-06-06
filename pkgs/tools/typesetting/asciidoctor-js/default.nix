@@ -1,4 +1,4 @@
-{ pkgs, lib, stdenv, makeWrapper, runCommand, nodejs, callPackage }:
+{ pkgs, lib, stdenv, makeWrapper, runCommand, nodejs, callPackage, extensions ? [ ] }:
 
 let
   asciidoctorJsPackages = import ./packages
@@ -8,7 +8,11 @@ let
 
   makeNodeModulesPath = lib.makeSearchPathOutput "lib/node_modules" "lib/node_modules";
 
-  plugins = [
+  default-extensions = [
+    asciidoctorJsPackages."asciidoctor-html5s"
+    asciidoctorJsPackages."@asciidoctor/manpage-converter"
+    asciidoctorJsPackages."@asciidoctor/docbook-converter"
+    asciidoctorJsPackages."asciidoctor-jupyter"
     asciidoctorJsPackages."asciidoctor-kroki"
     asciidoctorJsPackages."@deepsymmetry/asciidoctor-bytefield"
     asciidoctorJsPackages."asciidoctor-chart"
@@ -25,7 +29,6 @@ let
     asciidoctorJsPackages."asciidoctor-shiki"
     asciidoctorJsPackages."asciidoctor-liquibase"
     asciidoctorJsPackages."asciidoctor-interdoc-reftext"
-    asciidoctorJsPackages."@mvik/asciidoctor-hill-chart"
     asciidoctorJsPackages."asciidoctor-highlight.js"
     asciidoctorJsPackages."@springio/asciidoctor-extensions"
     asciidoctorJsPackages."asciidoctor-katex"
@@ -35,7 +38,7 @@ let
     asciidoctorJsPackages."@asciidoctor/tabs"
   ];
 
-  wrapWithAsciidoctorJsPlugins = { base, plugins, name ? (lib.getName base), meta ? (base.meta or { }) }:
+  wrapWithAsciidoctorJsPlugins = { base, extensions, name ? (lib.getName base), meta ? (base.meta or { }) }:
     runCommand
       name
       {
@@ -44,15 +47,20 @@ let
         buildInputs = [ makeWrapper ];
       } ''
       mkdir -p $out/bin
-      makeWrapper ${lib.getExe base} $out/bin/${meta.mainProgram or name} --suffix NODE_PATH : ${makeNodeModulesPath plugins}
+      makeWrapper ${lib.getExe base} $out/bin/${meta.mainProgram or name} --suffix NODE_PATH : ${makeNodeModulesPath extensions}
     '';
 
-  asciidoctor-js = wrapWithAsciidoctorJsPlugins { base = asciidoctorJsPackages."asciidoctor"; inherit plugins; };
-  asciidoctor-web-pdf = wrapWithAsciidoctorJsPlugins { base = asciidoctorJsPackages."asciidoctor-pdf"; name = "asciidoctor-web-pdf"; inherit plugins; };
+  asciidoctor-js = wrapWithAsciidoctorJsPlugins { base = asciidoctorJsPackages."asciidoctor"; extensions = default-extensions; };
+  # The npm package is called asciidoctor-pdf but the upstream project and the executable are called asciidoctor-web-pdf
+  asciidoctor-web-pdf = wrapWithAsciidoctorJsPlugins { base = asciidoctorJsPackages."asciidoctor-pdf"; name = "asciidoctor-web-pdf"; extensions = default-extensions; };
+  # The npm package is called asciidoctor-reveal.js but the upstream executable is called asciidoctor-revealjs
+  asciidoctor-revealjs = wrapWithAsciidoctorJsPlugins { base = asciidoctorJsPackages."@asciidoctor/reveal.js"; name = "asciidoctor-revealjs"; extensions = default-extensions ++ [ asciidoctorJsPackages."asciidoctor" ]; };
 in
 asciidoctor-js
   // {
   pkgs = asciidoctorJsPackages;
   asciidoctor-js = asciidoctor-js;
   asciidoctor-web-pdf = asciidoctor-web-pdf;
+  asciidoctor-revealjs = asciidoctor-revealjs;
+  default-extensions = default-extensions;
 }

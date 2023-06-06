@@ -47,21 +47,17 @@ final: prev: {
     '';
   });
 
-  "@mvik/asciidoctor-hill-chart" = prev."@mvik/asciidoctor-hill-chart".override (oldAttrs: {
-    nativeBuildInputs = [ pkgs.pkg-config nodejs.pkgs.node-pre-gyp ];
-    # These dependencies are required by
-    # https://github.com/Automattic/node-canvas.
-    buildInputs = with pkgs; [
-      giflib
-      pixman
-      cairo
-      pango
-    ] ++ lib.optionals stdenv.isDarwin [
-      darwin.apple_sdk.frameworks.CoreText
-    ];
+  "@asciidoctor/reveal.js" = prev."@asciidoctor/reveal.js".override (oldAttrs: {
+    nativeBuildInputs = [ pkgs.buildPackages.makeWrapper ];
+    prePatch = ''
+      export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
+    '';
+    postInstall = ''
+      ASCIIDOCTOR_REVEALJS=`readlink -f $out/bin/asciidoctor-revealjs`
+      rm $out/bin/asciidoctor-revealjs
+      makeWrapper "$ASCIIDOCTOR_REVEALJS" $out/bin/asciidoctor-revealjs \
+      --set-default PUPPETEER_EXECUTABLE_PATH "${lib.getExe pkgs.chromium}" \
+      --suffix NODE_PATH : ${final."@asciidoctor/core"}/lib/node_modules
+    '';
   });
-
-
-
-
 }

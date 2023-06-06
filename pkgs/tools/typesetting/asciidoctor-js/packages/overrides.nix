@@ -23,8 +23,12 @@ final: prev: {
       export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
     '';
     postInstall = ''
-      wrapProgram $out/bin/asciidoctor-web-pdf --set-default PUPPETEER_EXECUTABLE_PATH "${lib.getExe pkgs.chromium}"
-      wrapProgram $out/bin/asciidoctor-pdf --set-default PUPPETEER_EXECUTABLE_PATH "${lib.getExe pkgs.chromium}"
+      ASCIIDOCTOR_WEB_PDF=`readlink -f $out/bin/asciidoctor-web-pdf`
+      ASCIIDOCTOR_PDF=`readlink -f $out/bin/asciidoctor-pdf`
+      rm $out/bin/asciidoctor-web-pdf
+      rm $out/bin/asciidoctor-pdf
+      makeWrapper "$ASCIIDOCTOR_WEB_PDF" $out/bin/asciidoctor-web-pdf --set-default PUPPETEER_EXECUTABLE_PATH "${lib.getExe pkgs.chromium}"
+      makeWrapper "$ASCIIDOCTOR_PDF" $out/bin/asciidoctor-pdf --set-default PUPPETEER_EXECUTABLE_PATH "${lib.getExe pkgs.chromium}"
     '';
   });
 
@@ -34,7 +38,12 @@ final: prev: {
       export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
     '';
     postInstall = ''
-      wrapProgram $out/bin/asciidoctor --set-default PUPPETEER_EXECUTABLE_PATH "${lib.getExe pkgs.chromium}"
+      ASCIIDOCTOR=`readlink -f $out/bin/asciidoctor`
+      ASCIIDOCTORJS=`readlink -f $out/bin/asciidoctorjs`
+      rm $out/bin/asciidoctor
+      rm $out/bin/asciidoctorjs
+      makeWrapper "$ASCIIDOCTOR" $out/bin/asciidoctor --set-default PUPPETEER_EXECUTABLE_PATH "${lib.getExe pkgs.chromium}"
+      makeWrapper "$ASCIIDOCTORJS" $out/bin/asciidoctorjs --set-default PUPPETEER_EXECUTABLE_PATH "${lib.getExe pkgs.chromium}"
     '';
   });
 

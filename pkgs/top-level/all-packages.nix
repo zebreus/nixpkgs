@@ -6036,7 +6036,7 @@ with pkgs;
 
   asciidoctor = callPackage ../tools/typesetting/asciidoctor { };
 
-  asciidoctor-web-pdf = callPackage ../tools/typesetting/asciidoctor-js/asciidoctor-web-pdf.nix { };
+  asciidoctor-web-pdf = asciidoctor-js.asciidoctor-web-pdf;
   asciidoctor-js = callPackage ../tools/typesetting/asciidoctor-js { };
 
   asciidoctor-with-extensions = callPackage ../tools/typesetting/asciidoctor-with-extensions { };

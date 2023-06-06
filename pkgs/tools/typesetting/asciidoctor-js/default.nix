@@ -5,40 +5,54 @@ let
     {
       inherit pkgs lib nodejs stdenv;
     };
+
+  makeNodeModulesPath = lib.makeSearchPathOutput "lib/node_modules" "lib/node_modules";
+
+  plugins = [
+    asciidoctorJsPackages."asciidoctor-kroki"
+    asciidoctorJsPackages."@deepsymmetry/asciidoctor-bytefield"
+    asciidoctorJsPackages."asciidoctor-chart"
+    asciidoctorJsPackages."asciidoctor-color"
+    asciidoctorJsPackages."asciidoctor-emoji"
+    asciidoctorJsPackages."asciidoctor-caniuse"
+    asciidoctorJsPackages."asciidoctor-tweet"
+    asciidoctorJsPackages."asciidoctor-extension-interactive-runner"
+    asciidoctorJsPackages."@djencks/asciidoctor-mathjax"
+    asciidoctorJsPackages."@djencks/asciidoctor-template"
+    asciidoctorJsPackages."@djencks/asciidoctor-openblock"
+    asciidoctorJsPackages."@djencks/asciidoctor-glossary"
+    asciidoctorJsPackages."@djencks/asciidoctor-highlight.js-build-time"
+    asciidoctorJsPackages."asciidoctor-shiki"
+    asciidoctorJsPackages."asciidoctor-liquibase"
+    asciidoctorJsPackages."asciidoctor-interdoc-reftext"
+    asciidoctorJsPackages."@mvik/asciidoctor-hill-chart"
+    asciidoctorJsPackages."asciidoctor-highlight.js"
+    asciidoctorJsPackages."@springio/asciidoctor-extensions"
+    asciidoctorJsPackages."asciidoctor-katex"
+    asciidoctorJsPackages."asciidoctor-jira"
+    asciidoctorJsPackages."asciidoctor-prism-extension"
+    asciidoctorJsPackages."asciidoctor-external-callout"
+    asciidoctorJsPackages."@asciidoctor/tabs"
+  ];
+
+  wrapWithAsciidoctorJsPlugins = { base, plugins, name ? (lib.getName base), meta ? (base.meta or { }) }:
+    runCommand
+      name
+      {
+        inherit (base) version;
+        inherit meta name;
+        buildInputs = [ makeWrapper ];
+      } ''
+      mkdir -p $out/bin
+      makeWrapper ${lib.getExe base} $out/bin/${meta.mainProgram or name} --suffix NODE_PATH : ${makeNodeModulesPath plugins}
+    '';
+
+  asciidoctor-js = wrapWithAsciidoctorJsPlugins { base = asciidoctorJsPackages."asciidoctor"; inherit plugins; };
+  asciidoctor-web-pdf = wrapWithAsciidoctorJsPlugins { base = asciidoctorJsPackages."asciidoctor-pdf"; name = "asciidoctor-web-pdf"; inherit plugins; };
 in
-
-runCommand "asciidoctor-js"
-  {
-    buildInputs = [ makeWrapper ];
-  } ''
-  mkdir -p $out/bin
-
-  makeWrapper ${lib.getExe asciidoctorJsPackages.asciidoctor} $out/bin/asciidoctor-js \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-kroki"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."@deepsymmetry/asciidoctor-bytefield"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-chart"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-color"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-emoji"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-caniuse"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-tweet"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-extension-interactive-runner"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."@djencks/asciidoctor-mathjax"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."@djencks/asciidoctor-template"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."@djencks/asciidoctor-openblock"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."@djencks/asciidoctor-glossary"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."@djencks/asciidoctor-highlight.js-build-time"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-shiki"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-liquibase"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-interdoc-reftext"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."@mvik/asciidoctor-hill-chart"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-highlight.js"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."@springio/asciidoctor-extensions"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-katex"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-jira"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-prism-extension"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."asciidoctor-external-callout"}/lib/node_modules \
-  --suffix NODE_PATH : ${asciidoctorJsPackages."@asciidoctor/tabs"}/lib/node_modules
-''
+asciidoctor-js
   // {
   pkgs = asciidoctorJsPackages;
+  asciidoctor-js = asciidoctor-js;
+  asciidoctor-web-pdf = asciidoctor-web-pdf;
 }

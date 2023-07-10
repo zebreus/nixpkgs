@@ -1,19 +1,32 @@
-{ buildGoModule, fetchFromGitHub, installShellFiles, lib }:
+{ lib
+, buildGoModule
+, fetchFromGitHub
+, installShellFiles
+, testers
+, karmor
+}:
 
 buildGoModule rec {
   pname = "karmor";
-  version = "0.13.1";
+  version = "0.13.7";
 
   src = fetchFromGitHub {
     owner = "kubearmor";
     repo = "kubearmor-client";
     rev = "v${version}";
-    hash = "sha256-HSMyGA4S8VjEA2u4TbmH+qS5ZCsWBg+aTNhAbt4S6yY=";
+    hash = "sha256-IZUDVw41AfugqVG2hsxoKO7zl1FraVzME/GUxZwaAG4=";
   };
 
-  vendorHash = "sha256-Rxm96sgdZFKuyQzT76WJHvzEM0tG2rvqnl7+umoFIMY=";
+  vendorHash = "sha256-VT0CiaG5AODAL6nhoPmpulPApgTUiH0mXI6mS1eK14k=";
 
   nativeBuildInputs = [ installShellFiles ];
+
+  ldflags = [
+    "-s"
+    "-w"
+    "-X=github.com/kubearmor/kubearmor-client/selfupdate.BuildDate=1970-01-01"
+    "-X=github.com/kubearmor/kubearmor-client/selfupdate.GitSummary=${version}"
+  ];
 
   # integration tests require network access
   doCheck = false;
@@ -25,6 +38,13 @@ buildGoModule rec {
       --fish <($out/bin/karmor completion fish) \
       --zsh  <($out/bin/karmor completion zsh)
   '';
+
+  passthru.tests = {
+    version = testers.testVersion {
+      package = karmor;
+      command = "karmor version || true";
+    };
+  };
 
   meta = with lib; {
     description = "A client tool to help manage KubeArmor";

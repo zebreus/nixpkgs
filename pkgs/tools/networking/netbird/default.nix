@@ -30,16 +30,16 @@ let
 in
 buildGoModule rec {
   pname = "netbird";
-  version = "0.20.5";
+  version = "0.21.8";
 
   src = fetchFromGitHub {
     owner = "netbirdio";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-Di3Y5Pa4A6Iw0rXp0VdAPUuzFO3SnpV6Ip6N1gyFuoU=";
+    sha256 = "sha256-BSLstxiiFUJZLIVqHsAFv20GdXJaq2OucG40+lu5LYU=";
   };
 
-  vendorHash = "sha256-wgiDwf1aV8hM33ADgqAbmeLu9lDKdvw0d88IrVg0fmo=";
+  vendorHash = "sha256-R5LhqW6uh7R8/vr60Sy0kVpAaTL3rwh5c4Ix08Rx6Zk=";
 
   nativeBuildInputs = [ installShellFiles ] ++ lib.optional ui pkg-config;
 

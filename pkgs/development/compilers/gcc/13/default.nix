@@ -121,9 +121,7 @@ let majorVersion = "13";
 
       # Use absolute path in GNAT dylib install names on Darwin
       ++ optional (stdenv.isDarwin && langAda) ../gnat-darwin-dylib-install-name.patch
-
-      # Obtain latest patch with ../update-mcfgthread-patches.sh
-      ++ optional (!crossStageStatic && targetPlatform.isMinGW && threadsCross.model == "mcf") ./Added-mcf-thread-model-support-from-mcfgthread.patch;
+    ;
 
     /* Cross-gcc settings (build == host != target) */
     crossMingw = targetPlatform != hostPlatform && targetPlatform.libc == "msvcrt";
@@ -300,6 +298,9 @@ lib.pipe (stdenv.mkDerivation ({
     stripDebugListTarget
     preFixup;
 
+  # https://gcc.gnu.org/PR109898
+  enableParallelInstalling = false;
+
   # https://gcc.gnu.org/install/specific.html#x86-64-x-solaris210
   ${if hostPlatform.system == "x86_64-solaris" then "CC" else null} = "gcc -m64";
 
@@ -343,15 +344,10 @@ lib.pipe (stdenv.mkDerivation ({
   };
 }
 
-// optionalAttrs (targetPlatform != hostPlatform && targetPlatform.libc == "msvcrt" && crossStageStatic) {
-  makeFlags = [ "all-gcc" "all-target-libgcc" ];
-  installTargets = "install-gcc install-target-libgcc";
-}
-
 // optionalAttrs (enableMultilib) { dontMoveLib64 = true; }
 ))
 [
-  (callPackage ../common/libgcc.nix   { inherit langC langCC langJit; })
+  (callPackage ../common/libgcc.nix   { inherit version langC langCC langJit targetPlatform hostPlatform crossStageStatic; })
   (callPackage ../common/checksum.nix { inherit langC langCC; })
 ]
 

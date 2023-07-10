@@ -3,20 +3,18 @@
 , fetchPypi
 , writeText
 , buildPythonPackage
+, isPyPy
 , pythonOlder
 
 # https://github.com/matplotlib/matplotlib/blob/main/doc/devel/dependencies.rst
 # build-system
 , pkg-config
 , pybind11
-, setuptools
 , setuptools-scm
 
 # native libraries
 , ffmpeg-headless
-, fontconfig
 , freetype
-, imagemagick
 , qhull
 
 # propagates
@@ -42,7 +40,8 @@
 , pygobject3
 
 # Tk
-, enableTk ? !stdenv.isDarwin # darwin has its own "MacOSX" backend
+# Darwin has its own "MacOSX" backend, PyPy has tkagg backend and does not support tkinter
+, enableTk ? (!stdenv.isDarwin && !isPyPy)
 , tcl
 , tk
 , tkinter
@@ -119,6 +118,7 @@ buildPythonPackage rec {
     pkg-config
     pybind11
     setuptools-scm
+    numpy
   ];
 
   buildInputs = [

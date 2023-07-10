@@ -17,6 +17,7 @@
 , bash
   # optional dependencies
 , anthropic
+, clarifai
 , cohere
 , openai
 , nlpcloud
@@ -35,6 +36,7 @@
 , faiss
 , spacy
 , nltk
+, wikipedia
 , beautifulsoup4
 , tiktoken
 , jinja2
@@ -44,6 +46,7 @@
 , google-api-python-client
 , pypdf
 , networkx
+, pgvector
 , psycopg2
 , boto3
 , pyowm
@@ -59,22 +62,25 @@
 , chardet
 , requests-toolbelt
 , neo4j
+, langchainplus-sdk
   # test dependencies
 , pytest-vcr
 , pytest-asyncio
 , pytest-mock
 , pytest-socket
 , pandas
+, syrupy
 , toml
 , freezegun
 , responses
 , pexpect
 , pytestCheckHook
+, pythonRelaxDepsHook
 }:
 
 buildPythonPackage rec {
   pname = "langchain";
-  version = "0.0.184";
+  version = "0.0.220";
   format = "pyproject";
 
   disabled = pythonOlder "3.8";
@@ -83,7 +89,7 @@ buildPythonPackage rec {
     owner = "hwchase17";
     repo = "langchain";
     rev = "refs/tags/v${version}";
-    hash = "sha256-DIPlOsV+s7KQF70stCE7M2UwfvAqp3LskR0UtuOnuCs=";
+    hash = "sha256-Br9j2mmLFxW3MHIY93m85mAVrvWVc6bnSlI71OwT8mY=";
   };
 
   postPatch = ''
@@ -95,6 +101,7 @@ buildPythonPackage rec {
 
   nativeBuildInputs = [
     poetry-core
+    pythonRelaxDepsHook
   ];
 
   buildInputs = [
@@ -119,6 +126,7 @@ buildPythonPackage rec {
   passthru.optional-dependencies = {
     llms = [
       anthropic
+      clarifai
       cohere
       openai
       nlpcloud
@@ -135,6 +143,9 @@ buildPythonPackage rec {
     ];
     text_helpers = [
       chardet
+    ];
+    clarifai = [
+      clarifai
     ];
     cohere = [
       cohere
@@ -153,6 +164,7 @@ buildPythonPackage rec {
     ];
     all = [
       anthropic
+      clarifai
       cohere
       openai
       nlpcloud
@@ -167,7 +179,7 @@ buildPythonPackage rec {
       transformers
       spacy
       nltk
-      # wikipedia
+      wikipedia
       beautifulsoup4
       tiktoken
       torch
@@ -185,7 +197,7 @@ buildPythonPackage rec {
       # nomic
       # aleph-alpha-client
       # deeplake
-      # pgvector
+      pgvector
       psycopg2
       boto3
       pyowm
@@ -215,8 +227,13 @@ buildPythonPackage rec {
       # azure-ai-formrecognizer
       # azure-ai-vision
       # azure-cognitiveservices-speech
+      langchainplus-sdk
     ];
   };
+
+  pythonRelaxDeps = [
+    "langchainplus-sdk"
+  ];
 
   nativeCheckInputs = [
     pytestCheckHook
@@ -225,6 +242,7 @@ buildPythonPackage rec {
     pytest-socket
     pytest-asyncio
     pandas
+    syrupy
     toml
     freezegun
     responses

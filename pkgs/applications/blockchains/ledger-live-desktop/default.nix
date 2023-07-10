@@ -2,12 +2,13 @@
 
 let
   pname = "ledger-live-desktop";
-  version = "2.60.0";
+  version = "2.62.2";
 
   src = fetchurl {
     url = "https://download.live.ledger.com/${pname}-${version}-linux-x86_64.AppImage";
-    hash = "sha256-dR6F6elUxZW3EuH71d5P9SOSDq5f5lAsYnrfWrsj2KA=";
+    hash = "sha256-Rb611v2QirGmJ01lZj6F3iHLTPI2eJp5acZDEQ4Ude0==";
   };
+
 
   appimageContents = appimageTools.extractType2 {
     inherit pname version src;
@@ -30,7 +31,7 @@ appimageTools.wrapType2 rec {
     description = "App for Ledger hardware wallets";
     homepage = "https://www.ledger.com/ledger-live/";
     license = licenses.mit;
-    maintainers = with maintainers; [ andresilva thedavidmeister nyanloutre RaghavSood th0rgal WeebSorceress ];
+    maintainers = with maintainers; [ andresilva thedavidmeister nyanloutre RaghavSood th0rgal ];
     platforms = [ "x86_64-linux" ];
   };
 }

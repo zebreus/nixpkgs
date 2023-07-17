@@ -15529,6 +15529,9 @@ with pkgs;
 
   beekeeper-studio = callPackage ../development/tools/database/beekeeper-studio { };
 
+  bambu-unwrapped = callPackage ../development/compilers/bambu { };
+  bambu = callPackage ../development/compilers/bambu/wrapper.nix { };
+
   bfc = callPackage ../development/compilers/bfc { };
 
   bigloo = callPackage ../development/compilers/bigloo { };

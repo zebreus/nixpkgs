@@ -1,7 +1,8 @@
-{ stdenv, lib, makeWrapper, fetchzip, testdisk, imagemagick, jdk, findutils, sleuthkit, ... }:
+{ stdenv, lib, makeWrapper, fetchzip, testdisk, imagemagick, jdk, openjfx, findutils, sleuthkit, ... }:
 let
   jdkWithJfx = jdk.override (lib.optionalAttrs stdenv.isLinux {
     enableJavaFX = true;
+    openjfx = openjfx.override { withWebKit = true; };
   });
 in
 stdenv.mkDerivation rec {

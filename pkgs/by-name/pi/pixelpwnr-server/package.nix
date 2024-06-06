@@ -69,10 +69,10 @@ rustPlatform.buildRustPackage {
     # patchelf $out/bin/pixelpwnr-server \
     #   --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" \
     #   $out/bin/pixelpwnr-server
-    # patchelf $out/bin/pixelpwnr-server --add-needed libGL.so --add-rpath \
-    #   ${lib.makeLibraryPath [ libGL ]}
-    wrapProgram $out/bin/pixelpwnr-server \
-        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL ]}
+    patchelf $out/bin/pixelpwnr-server --add-needed libGL.so --add-rpath \
+      ${lib.makeLibraryPath [ libGL ]}
+    # wrapProgram $out/bin/pixelpwnr-server \
+    #     --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL ]}
   '';
 
   doCheck = false;

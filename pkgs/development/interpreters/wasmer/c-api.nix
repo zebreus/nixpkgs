@@ -10,7 +10,7 @@
 }:
 
 rustPlatform.buildRustPackage rec {
-  pname = "wasmer";
+  pname = "wasmer-c-api";
   version = "6.0.1";
 
   src = fetchFromGitHub {
@@ -34,25 +34,28 @@ rustPlatform.buildRustPackage rec {
   ];
 
   # check references to `compiler_features` in Makefile on update
-  buildFeatures =
-    [
-      "cranelift"
-      "wasmer-artifact-create"
-      "static-artifact-create"
-      "wasmer-artifact-load"
-      "static-artifact-load"
+  buildFeatures = [
+     "webc_runner"
+     # "cranelift" is enabled by default
+     "wasmer-artifact-create"
+     "static-artifact-create"
+     "wasmer-artifact-load"
+     "static-artifact-load"
     ]
     ++ lib.optional withLLVM "llvm"
     ++ lib.optional withSinglepass "singlepass";
 
   cargoBuildFlags = [
     "--manifest-path"
-    "lib/cli/Cargo.toml"
-    "--bin"
-    "wasmer"
+    "lib/c-api/Cargo.toml"
   ];
 
   auditable = false;
+
+  postInstall = ''
+	  for header in lib/c-api/*.h; do install -Dm644 "$header" $out/include/$(basename $header); done
+    printf "prefix=$out\nincludedir=\044{prefix}/include\nlibdir=\044{prefix}/lib\n\nName: wasmer\nDescription: The Wasmer library for running WebAssembly\nVersion: ${version}\nCflags: -I\044{includedir}\nLibs: -L\044{libdir} -lwasmer\n" | install -Dm644 /dev/stdin $out/lib/pkgconfig/wasmer.pc
+  '';
 
   env.LLVM_SYS_180_PREFIX = lib.optionalString withLLVM llvmPackages.llvm.dev;
 
@@ -60,8 +63,7 @@ rustPlatform.buildRustPackage rec {
   doCheck = false;
 
   meta = {
-    description = "Universal WebAssembly Runtime";
-    mainProgram = "wasmer";
+    description = "Universal WebAssembly Runtime C API";
     longDescription = ''
       Wasmer is a standalone WebAssembly runtime for running WebAssembly outside
       of the browser, supporting WASI and Emscripten. Wasmer can be used

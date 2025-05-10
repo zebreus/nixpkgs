@@ -16707,6 +16707,10 @@ with pkgs;
     llvmPackages = llvmPackages_18;
   };
 
+  wasmer-c-api = callPackage ../development/interpreters/wasmer/c-api.nix {
+    llvmPackages = llvmPackages_18;
+  };
+
   wavm = callPackage ../development/interpreters/wavm {
     llvmPackages = llvmPackages_12;
   };

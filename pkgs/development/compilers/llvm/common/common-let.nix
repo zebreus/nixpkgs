@@ -30,6 +30,7 @@ rec {
       ++ lib.platforms.power
       ++ lib.platforms.s390x
       ++ lib.platforms.wasi
+      ++ lib.platforms.wasix
       ++ lib.platforms.x86
       ++ lib.optionals (lib.versionAtLeast release_version "7") lib.platforms.riscv
       ++ lib.optionals (lib.versionAtLeast release_version "14") lib.platforms.m68k

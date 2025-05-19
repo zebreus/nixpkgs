@@ -8256,6 +8256,8 @@ with pkgs;
       targetPackages.netbsd.libc or netbsd.libc
     else if name == "wasilibc" then
       targetPackages.wasilibc or wasilibc
+    else if name == "wasix-libc" then
+      targetPackages.wasix-libc or wasix-libc
     else if name == "relibc" then
       targetPackages.relibc or relibc
     else if name == "llvm" then
@@ -8279,6 +8281,10 @@ with pkgs;
       };
 
   wasilibc = callPackage ../development/libraries/wasilibc {
+    stdenv = stdenvNoLibc;
+  };
+
+  wasix-libc = callPackage ../development/libraries/wasix-libc {
     stdenv = stdenvNoLibc;
   };
 
@@ -8790,6 +8796,7 @@ with pkgs;
         "musl"
         "nblibc"
         "wasilibc"
+        "wasix-libc"
         "fblibc"
       ]
     then

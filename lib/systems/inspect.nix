@@ -342,6 +342,9 @@ rec {
     isWasi = {
       kernel = kernels.wasi;
     };
+    isWasix = {
+      kernel = kernels.wasix;
+    };
     isRedox = {
       kernel = kernels.redox;
     };

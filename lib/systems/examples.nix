@@ -376,6 +376,11 @@ rec {
     useLLVM = true;
   };
 
+  wasix32 = {
+    config = "wasm32-unknown-wasix";
+    useLLVM = true;
+  };
+
   wasm32-unknown-none = {
     config = "wasm32-unknown-none";
     rust.rustcTarget = "wasm32-unknown-unknown";

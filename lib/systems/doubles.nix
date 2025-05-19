@@ -104,6 +104,10 @@ let
     "wasm64-wasi"
     "wasm32-wasi"
 
+    # WASIX
+    "wasm64-wasix"
+    "wasm32-wasix"
+
     # Windows
     "aarch64-windows"
     "x86_64-windows"
@@ -185,6 +189,7 @@ in
   openbsd = filterDoubles predicates.isOpenBSD;
   unix = filterDoubles predicates.isUnix;
   wasi = filterDoubles predicates.isWasi;
+  wasix = filterDoubles predicates.isWasix;
   redox = filterDoubles predicates.isRedox;
   windows = filterDoubles predicates.isWindows;
   genode = filterDoubles predicates.isGenode;

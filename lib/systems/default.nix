@@ -111,7 +111,9 @@ let
               "msvcrt"
             else if final.isWasi then
               "wasilibc"
-            else if final.isWasm && !final.isWasi then
+            else if final.isWasix then
+              "wasix-libc"
+            else if final.isWasm && !final.isWasi && !final.isWasix then
               null
             else if final.isRedox then
               "relibc"
@@ -194,6 +196,7 @@ let
                 freebsd = "FreeBSD";
                 openbsd = "OpenBSD";
                 wasi = "Wasi";
+                wasix = "Wasix";
                 redox = "Redox";
                 genode = "Genode";
               }
@@ -246,7 +249,7 @@ let
           # don't support dynamic linking, but don't get the `staticMarker`.
           # `pkgsStatic` sets `isStatic=true`, so `pkgsStatic.hostPlatform` always
           # has the `staticMarker`.
-          isStatic = final.isWasi || final.isRedox;
+          isStatic = final.isWasi || final.isWasix || final.isRedox;
 
           # Just a guess, based on `system`
           inherit
@@ -386,6 +389,8 @@ let
                 "${pkgs.qemu-user}/bin/qemu-${final.qemuArch}"
               else if final.isWasi then
                 "${pkgs.wasmtime}/bin/wasmtime"
+              else if final.isWasix then
+                "${pkgs.wasmer}/bin/wasmer"
               else if final.isMmix then
                 "${pkgs.mmixware}/bin/mmix"
               else
@@ -396,7 +401,7 @@ let
 
             # whether final.emulator pkgs.pkgsStatic works
             staticEmulatorAvailable =
-              pkgs: final.emulatorAvailable pkgs && (final.isLinux || final.isWasi || final.isMmix);
+              pkgs: final.emulatorAvailable pkgs && (final.isLinux || final.isWasi || final.isWasix || final.isMmix);
 
             emulator =
               pkgs:
@@ -437,7 +442,7 @@ let
                   rust.platform.os or "none"
                 else if final.isDarwin then
                   "macos"
-                else if final.isWasm && !final.isWasi then
+                else if final.isWasm && !final.isWasi && !final.isWasix then
                   "unknown" # Needed for {wasm32,wasm64}-unknown-unknown.
                 else
                   final.parsed.kernel.name;
@@ -492,7 +497,9 @@ let
                 # We cannot know which subversion does the user want, and
                 # currently use WASI 0.1 as default for compatibility. Custom
                 # users can set `rust.rustcTarget` to override it.
-                if final.isWasi then
+                #
+                # TODO: Find out what this is for Wasix.
+                if final.isWasi || final.isWasix then
                   "${cpu_}-wasip1"
                 else
                   "${cpu_}-${vendor_}-${kernel.name}${optionalString (abi.name != "unknown") "-${abi.name}"}"
@@ -555,7 +562,8 @@ let
                 "wasm32" = "wasm";
               }
               .${final.parsed.cpu.name} or (throw "Unknown CPU variant ${final.parsed.cpu.name} by Go");
-            GOOS = if final.isWasi then "wasip1" else final.parsed.kernel.name;
+            # Figure out what to do with wasix and go
+            GOOS = if final.isWasi || final.isWasix then "wasip1" else final.parsed.kernel.name;
 
             # See https://go.dev/wiki/GoArm
             GOARM = toString (lib.intersectLists [ (final.parsed.cpu.version or "") ] [ "5" "6" "7" ]);

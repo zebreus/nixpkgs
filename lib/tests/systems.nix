@@ -48,6 +48,7 @@ lib.runTests (
       ++ netbsd
       ++ illumos
       ++ wasi
+      ++ wasix
       ++ windows
       ++ embedded
       ++ mmix

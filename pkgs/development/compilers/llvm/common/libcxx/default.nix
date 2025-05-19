@@ -75,7 +75,7 @@ let
     ++ lib.optionals (cxxabi != null) [
       (lib.cmakeFeature "LIBCXX_CXX_ABI_INCLUDE_PATHS" "${lib.getDev cxxabi}/include")
     ]
-    ++ lib.optionals (stdenv.hostPlatform.isMusl || stdenv.hostPlatform.isWasi) [
+    ++ lib.optionals (stdenv.hostPlatform.isMusl || stdenv.hostPlatform.isWasi || stdenv.hostPlatform.isWasix) [
       (lib.cmakeFeature "LIBCXX_HAS_MUSL_LIBC" "1")
     ]
     ++

@@ -77,6 +77,7 @@ lib.init bootStages
                   || builtins.elem p.libc [
                     "musl"
                     "wasilibc"
+                    "wasix-libc"
                     "relibc"
                   ]
                   || p.isiOS

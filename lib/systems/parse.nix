@@ -609,6 +609,10 @@ rec {
         execFormat = wasm;
         families = { };
       };
+      wasix = {
+        execFormat = wasm;
+        families = { };
+      };
       redox = {
         execFormat = elf;
         families = { };

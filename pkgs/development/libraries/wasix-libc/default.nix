@@ -18,9 +18,9 @@ stdenv.mkDerivation {
   src = buildPackages.fetchFromGitHub {
     owner = "wasix-org";
     repo = "wasix-libc";
-    rev = "a5499ecac5d07e874fa5cbd8cd2c4baddc3d8942";
-    hash = "sha256-FseTYcWNMg3p1ra8a/Vx7U8e/Y00kh86OmXRTw0vqy0=";
-    fetchSubmodules = true;
+    rev = "7d30e5e445022499114fbdddbab4db4035bef4ec";
+    hash = "sha256-nki1tZK0hCXQEefaPrFesJmK0DmQRE7qY28weDtlO8I=";
+    fetchSubmodules = false;
   };
 
   outputs = [
@@ -44,6 +44,7 @@ stdenv.mkDerivation {
     export SYSROOT_INC=${builtins.placeholder "dev"}/include
     export SYSROOT_SHARE=${builtins.placeholder "share"}/share
     mkdir -p "$SYSROOT_LIB" "$SYSROOT_INC" "$SYSROOT_SHARE"
+    makefile=Makefile
     makeFlagsArray+=(
       "SYSROOT_LIB:=$SYSROOT_LIB"
       "SYSROOT_INC:=$SYSROOT_INC"
@@ -51,6 +52,7 @@ stdenv.mkDerivation {
       # # https://bugzilla.mozilla.org/show_bug.cgi?id=1773200
       # "BULK_MEMORY_SOURCES:="
       PIC:=yes
+      EXCEPTIONS:=yes
     )
 
     export TARGET_ARCH=wasm32

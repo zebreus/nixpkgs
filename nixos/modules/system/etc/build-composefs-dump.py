@@ -67,10 +67,13 @@ class ComposefsPath:
         self.payload = payload
 
     def write_line(self) -> str:
+        # Ensure mode has 4 digits for proper octal representation
+        # E.g., "644" should become "0644" to avoid misinterpretation
+        mode_padded = self.mode.zfill(4) if self.mode.isdigit() else self.mode
         line_list = [
             str(self.path),
             str(self.size),
-            f"{self.filetype.value}{self.mode}",
+            f"{self.filetype.value}{mode_padded}",
             str(self.nlink),
             str(self.uid),
             str(self.gid),

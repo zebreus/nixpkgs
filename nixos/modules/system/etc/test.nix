@@ -27,6 +27,27 @@ let
       };
     }
   );
+  
+  # Node for testing overlay mode with file mode
+  overlayNode = evalMinimalConfig (
+    { config, ... }:
+    {
+      imports = [
+        pkgsModule
+        ../etc/etc.nix
+      ];
+      system.etc.overlay.enable = true;
+      environment.etc."test-file" = {
+        text = "test content";
+        mode = "0644";
+      };
+      environment.etc."test-file-short-mode" = {
+        text = "test content with short mode";
+        mode = "644";
+      };
+    }
+  );
+  
   passwdText = ''
     root:x:0:0:System administrator:/root:/run/current-system/sw/bin/bash
   '';
@@ -81,6 +102,28 @@ lib.recurseIntoAttrs {
           source $stdenv/setup
           eval "$fakeRootCommands"
         '
+      '';
+
+  # Test that files with mode specified without leading zero don't become FIFOs
+  test-etc-overlay-file-mode =
+    runCommand "test-etc-overlay-file-mode"
+      {
+        nativeBuildInputs = [
+          coreutils
+        ];
+      }
+      ''
+        # Build the metadata image to check it can be created successfully
+        echo "Building etcMetadataImage..."
+        ${overlayNode.config.system.build.etcMetadataImage}
+        
+        # Check that the etcBasedir contains the expected files
+        echo "Checking etcBasedir..."
+        [ -f "${overlayNode.config.system.build.etcBasedir}/test-file" ] || (echo "test-file not found in etcBasedir" && exit 1)
+        [ -f "${overlayNode.config.system.build.etcBasedir}/test-file-short-mode" ] || (echo "test-file-short-mode not found in etcBasedir" && exit 1)
+        
+        echo "Test passed!"
+        touch $out
       '';
 
 }

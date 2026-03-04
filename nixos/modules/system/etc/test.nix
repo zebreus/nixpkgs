@@ -5,6 +5,7 @@
   fakeroot,
   evalMinimalConfig,
   pkgsModule,
+  python3,
   runCommand,
   util-linux,
   vmTools,
@@ -27,27 +28,6 @@ let
       };
     }
   );
-  
-  # Node for testing overlay mode with file mode
-  overlayNode = evalMinimalConfig (
-    { config, ... }:
-    {
-      imports = [
-        pkgsModule
-        ../etc/etc.nix
-      ];
-      system.etc.overlay.enable = true;
-      environment.etc."test-file" = {
-        text = "test content";
-        mode = "0644";
-      };
-      environment.etc."test-file-short-mode" = {
-        text = "test content with short mode";
-        mode = "644";
-      };
-    }
-  );
-  
   passwdText = ''
     root:x:0:0:System administrator:/root:/run/current-system/sw/bin/bash
   '';
@@ -104,26 +84,24 @@ lib.recurseIntoAttrs {
         '
       '';
 
-  # Test that files with mode specified without leading zero don't become FIFOs
+  # Test that files with mode specified without leading zero don't become FIFOs in the composefs dump
   test-etc-overlay-file-mode =
-    runCommand "test-etc-overlay-file-mode"
-      {
-        nativeBuildInputs = [
-          coreutils
-        ];
-      }
-      ''
-        # Build the metadata image to check it can be created successfully
-        echo "Building etcMetadataImage..."
-        ${overlayNode.config.system.build.etcMetadataImage}
-        
-        # Check that the etcBasedir contains the expected files
-        echo "Checking etcBasedir..."
-        [ -f "${overlayNode.config.system.build.etcBasedir}/test-file" ] || (echo "test-file not found in etcBasedir" && exit 1)
-        [ -f "${overlayNode.config.system.build.etcBasedir}/test-file-short-mode" ] || (echo "test-file-short-mode not found in etcBasedir" && exit 1)
-        
-        echo "Test passed!"
-        touch $out
-      '';
+    let
+      testSource = writeText "test-etc-overlay-source" "test content";
+      testConfig = writeText "test-etc-overlay-config" (builtins.toJSON [
+        {
+          target = "test-file";
+          source = "${testSource}";
+          mode = "644";
+          uid = 0;
+          gid = 0;
+        }
+      ]);
+    in
+    runCommand "test-etc-overlay-file-mode" { nativeBuildInputs = [ python3 ]; } ''
+      python3 ${./build-composefs-dump.py} ${testConfig} > dump.txt
+      grep -q " 100644 " dump.txt || (echo "ERROR: Expected regular file mode 100644 in composefs dump:" && cat dump.txt && exit 1)
+      touch $out
+    '';
 
 }

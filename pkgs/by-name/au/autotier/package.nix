@@ -5,7 +5,7 @@
   fetchpatch,
   pkg-config,
   rocksdb,
-  boost,
+  boost188,
   fuse3,
   lib45d,
   onetbb,
@@ -46,7 +46,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs = [
     rocksdb
-    boost
+    boost188
     fuse3
     lib45d
     onetbb

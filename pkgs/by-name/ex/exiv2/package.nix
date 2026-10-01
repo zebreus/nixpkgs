@@ -109,6 +109,10 @@ stdenv.mkDerivation (finalAttrs: {
       --replace-fail "def io_test(self):" "def io_disabled(self):"
   '';
 
+  postInstall = ''
+    moveToOutput share/locale "$lib"
+  '';
+
   preFixup = ''
     remove-references-to -t ${stdenv.cc.cc} $lib/lib/*.so.*.*.* $out/bin/exiv2
   '';
